@@ -15,29 +15,29 @@
    ========================================================= */
 :root{
   /* surfaces */
-  --paper:#e7ebe7;          /* cool clinical paper, not warm cream */
+  --paper:#e7ebe7;
   --card:#fbfcfb;
   --card-2:#f1f4f1;
   --line:#d4dad4;
   --line-strong:#b6bfb6;
 
   /* ink */
-  --ink:#172019;            /* near-black, faint green-cool cast */
+  --ink:#172019;
   --ink-2:#445049;
   --ink-3:#7c867f;
 
   /* accents */
-  --vital:#1f6f50;          /* primary — clinical green (go / breath) */
+  --vital:#1f6f50;
   --vital-deep:#15543c;
   --vital-soft:#e3efe9;
-  --signal:#d8593b;         /* sparing warm signal / pulse */
+  --signal:#d8593b;
 
   /* axis hues (muted, harmonise on paper) */
-  --axis-body:#b07a2e;      /* 筋骨格 ochre */
-  --axis-stamina:#1f6f50;   /* 心肺 green */
-  --axis-mind:#5b5ba6;      /* 認知 indigo */
+  --axis-body:#b07a2e;
+  --axis-stamina:#1f6f50;
+  --axis-mind:#5b5ba6;
 
-  --line-brand:#06c755;     /* LINE */
+  --line-brand:#06c755;
 
   /* type */
   --serif:"Zen Old Mincho",serif;
@@ -68,7 +68,7 @@ button{font-family:inherit;cursor:pointer;}
 :focus-visible{outline:2.5px solid var(--vital);outline-offset:3px;border-radius:6px;}
 
 /* =========================================================
-   App shell — a normal document column, not a fixed-height box
+   App shell
    ========================================================= */
 .app{
   position:relative;
@@ -79,10 +79,11 @@ button{font-family:inherit;cursor:pointer;}
   border-radius:clamp(0px,2vw,26px);
   box-shadow:var(--shadow);
   overflow:hidden;
+  min-height: 80vh; /* 追加: 画面の高さを確保 */
 }
 @media (max-width:640px){
   body{padding:0;}
-  .app{border-radius:0;border-left:0;border-right:0;}
+  .app{border-radius:0;border-left:0;border-right:0;min-height: 100vh;}
 }
 
 /* top progress trace */
@@ -98,21 +99,4 @@ button{font-family:inherit;cursor:pointer;}
 .ecg{
   position:absolute;left:0;right:0;bottom:0;height:54px;
   pointer-events:none;opacity:.5;z-index:0;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
-}
-.ecg path{
-  fill:none;stroke:var(--vital);stroke-width:1.6;opacity:.55;
-  stroke-dasharray:1400;stroke-dashoffset:1400;
-  animation:ecgDraw 4.5s linear infinite;
-}
-@keyframes ecgDraw{
-  0%{stroke-dashoffset:1400;}
-  60%,100%{stroke-dashoffset:0;}
-}
-
-/* content stage — just a container, not a scroller */
-.stage{
-  position:relative;z-index:1;
-}
-/* shell: short screens fill viewport height and vertically
+  -webkit-mask-image:linear-gradient(90deg
