@@ -1,846 +1,451 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Lum — あなたの歩みが、世界を照らす</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#0a0f0c;--deep:#0d1410;--forest:#1b3528;--moss:#3a6650;
-  --sage:#6e9e82;--gold:#c08828;--gilt:#e2b86a;--bark:#2a2118;
-  --text:#f0ede4;--muted:#b0b4ab;--line:rgba(110,158,130,.18);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{-webkit-text-size-adjust:100%}
-body{background:var(--ink);color:var(--text);
-  font-family:'DM Mono',monospace;font-weight:300;
-  min-height:100svh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit-Modi (フィット・モディ)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #161f30;
+            --text-color: #ffffff;
+            --text-muted: #8fa0dd;
+            --accent-neon: #00ffcc; 
+            --accent-pink: #ff007f;
+        }
 
-@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.u{animation:up .7s cubic-bezier(.4,0,.2,1) both}
-.d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}.d4{animation-delay:.42s}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.6)}}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans JP', 'Montserrat', sans-serif;
+        }
 
-.app{position:relative;z-index:1;max-width:430px;margin:0 auto;padding:0 22px 96px;min-height:100svh}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-/* ── header ── */
-header{text-align:center;padding:28px 0 16px}
-.logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;
-  letter-spacing:.1em;color:var(--gilt);line-height:1}
-.logo-sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-top:7px}
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-/* ── tabs (bottom nav) ── */
-.tabbar{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:430px;z-index:100;
-  display:flex;background:rgba(13,20,16,.94);backdrop-filter:blur(16px);
-  border-top:1px solid var(--line);
-}
-.tab{
-  flex:1;padding:12px 4px 14px;background:none;border:none;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  color:var(--muted);transition:color .2s;
-}
-.tab.active{color:var(--gilt)}
-.tab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5}
-.tab span{font-size:9.5px;letter-spacing:.06em;font-weight:400}
+        /* 画面切り替え用の制御 */
+        .screen { display: none; }
+        .screen.active { display: block; }
 
-/* ── views ── */
-.view{display:none}
-.view.active{display:block;animation:up .5s cubic-bezier(.4,0,.2,1) both}
+        h1.logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            text-align: center;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--accent-neon), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
 
-/* ════ INPUT ZONE ════ */
-.input-zone{
-  background:rgba(226,184,106,.05);border:1px dashed rgba(226,184,106,.35);
-  border-radius:18px;padding:30px 22px;text-align:center;cursor:pointer;
-  transition:all .3s ease;margin-bottom:16px;
-}
-.input-zone:hover{border-color:var(--gilt);background:rgba(226,184,106,.09)}
-.iz-icon{width:46px;height:46px;margin:0 auto 14px;border-radius:50%;
-  border:1px solid rgba(226,184,106,.3);display:flex;align-items:center;justify-content:center}
-.iz-icon svg{width:22px;height:22px;fill:none;stroke:var(--gilt);stroke-width:1.5}
-.iz-title{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:7px;font-weight:400}
-.iz-sub{font-size:11px;color:var(--muted);line-height:1.65}
-#file-input{display:none}
-.manual-link{text-align:center;margin-bottom:8px}
-.manual-link button{background:none;border:none;color:var(--sage);
-  font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.06em;
-  cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+        .tagline {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 3px;
+            margin-bottom: 32px;
+        }
 
-/* processing */
-.processing{display:none;text-align:center;padding:30px 0;margin-bottom:16px}
-.processing.show{display:block}
-.proc-ring{width:52px;height:52px;margin:0 auto 16px;
-  border:2px solid rgba(226,184,106,.15);border-top-color:var(--gilt);
-  border-radius:50%;animation:spin 1s linear infinite}
-.proc-text{font-size:12px;color:var(--text);letter-spacing:.08em}
+        /* 入力フォーム */
+        .form-group {
+            margin-bottom: 24px;
+        }
 
-/* ════ CANVAS (生涯) ════ */
-.canvas-frame{position:relative;aspect-ratio:1/1;border-radius:18px;overflow:hidden;
-  border:1px solid var(--line);margin-bottom:14px;
-  box-shadow:0 8px 40px rgba(0,0,0,.4)}
-#life-canvas{display:block;width:100%;height:100%}
-.cf-ui{position:absolute;inset:0;display:flex;flex-direction:column;
-  justify-content:space-between;padding:16px;pointer-events:none}
-.cf-top{display:flex;justify-content:space-between}
-.cf-date{font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,.5)}
-.cf-lumen{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:rgba(226,184,106,.92);text-shadow:0 1px 8px rgba(0,0,0,.6)}
-.cf-poem{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;
-  line-height:1.8;color:rgba(255,255,255,.92);text-shadow:0 2px 14px rgba(0,0,0,.85)}
-.cf-note{font-size:9.5px;letter-spacing:.07em;color:rgba(226,184,106,.9);margin-top:6px;text-shadow:0 1px 8px rgba(0,0,0,.7)}
-@keyframes glow{0%{opacity:.8}100%{opacity:0}}
-#cf-flash{position:absolute;inset:0;border-radius:18px;
-  border:1.5px solid rgba(226,184,106,.7);pointer-events:none;display:none}
+        label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
 
-/* result card */
-.result-card{display:none;background:rgba(58,102,80,.1);border:1px solid rgba(110,158,130,.25);
-  border-radius:16px;padding:20px;text-align:center;margin-bottom:14px}
-.result-card.show{display:block;animation:up .7s cubic-bezier(.4,0,.2,1) both}
-.rc-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);margin-bottom:10px}
-.rc-steps{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text);line-height:1}
-.rc-steps span{font-size:.75rem;color:var(--muted)}
-.rc-lumen{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:var(--gilt);line-height:1;margin:8px 0 2px}
-.rc-unit{font-size:.85rem;color:var(--text);font-style:italic;font-family:'Cormorant Garamond',serif}
-.rc-bonus{font-size:12px;color:var(--gilt);margin-top:10px;min-height:16px;opacity:0;transition:opacity .6s}
-.rc-bonus.show{opacity:1}
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 4px;
+            outline: none;
+        }
 
-/* stat row */
-.stat-row{display:flex;gap:8px;margin-bottom:14px}
-.stat-cell{flex:1;background:rgba(255,255,255,.02);border:1px solid var(--line);
-  border-radius:12px;padding:14px 8px;text-align:center}
-.stat-v{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:400;color:var(--text);line-height:1}
-.stat-v.gold{color:var(--gilt)}
-.stat-k{font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.04em;line-height:1.4}
+        input[type="text"]:focus {
+            border-color: var(--accent-neon);
+        }
 
-/* section label */
-.sec-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);
-  margin:20px 0 10px;display:flex;align-items:center;gap:8px}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--line)}
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, var(--accent-neon), #00bfff);
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+        }
 
-/* circulation flow */
-.circ-card{background:rgba(255,255,255,.02);border:1px solid var(--line);
-  border-radius:14px;padding:18px;margin-bottom:14px}
-.flow-step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
-.flow-step:last-child{border-bottom:none}
-.fs-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.fs-body{flex:1}
-.fs-title{font-size:13px;color:var(--text);line-height:1.4;font-weight:400}
-.fs-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5}
-.fs-val{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gilt);flex-shrink:0}
+        /* プログレスバー */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin-bottom: 24px;
+        }
 
-/* alloc */
-.alloc-card{background:rgba(255,255,255,.02);border:1px solid var(--line);
-  border-radius:14px;padding:18px;margin-bottom:14px}
-.al-row{display:flex;align-items:center;gap:9px;margin-bottom:9px}
-.al-row:last-child{margin-bottom:0}
-.al-name{font-size:11px;color:var(--text);width:120px;flex-shrink:0;line-height:1.4}
-.al-track{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
-.al-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.al-val{font-size:10px;color:var(--text);width:48px;text-align:right;flex-shrink:0}
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-neon);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
 
-/* infinite note */
-.infinite{background:rgba(192,136,40,.06);border:1px solid rgba(192,136,40,.18);
-  border-radius:14px;padding:18px 20px;margin-bottom:14px;text-align:center}
-.inf-icon{font-size:1.3rem;color:var(--gilt);margin-bottom:8px}
-.inf-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--gilt);margin-bottom:6px}
-.inf-body{font-size:12.5px;color:var(--muted);line-height:1.9}
-.inf-body strong{color:var(--sage);font-weight:400}
+        /* 質問エリア */
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            text-align: center;
+            min-height: 60px;
+        }
 
-/* ════ COMMUNITY ════ */
-.you-card{background:rgba(58,102,80,.08);border:1px solid rgba(110,158,130,.2);
-  border-radius:16px;padding:18px 20px;margin-bottom:14px;text-align:center}
-.you-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage);margin-bottom:8px}
-.you-text{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:300;line-height:1.6;color:var(--text)}
-.you-text em{color:var(--gilt);font-style:italic}
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-.community-orb{position:relative;aspect-ratio:1/1;margin:6px 0 16px;border-radius:20px;overflow:hidden;
-  background:radial-gradient(ellipse 80% 80% at 50% 50%,#14201a 0%,#0a0f0c 78%);border:1px solid var(--line)}
-#comm-canvas{display:block;width:100%;height:100%}
-.orb-overlay{position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;pointer-events:none;text-align:center}
-.oo-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
-.oo-num{font-family:'Cormorant Garamond',serif;font-size:2.7rem;font-weight:300;color:var(--gilt);line-height:1}
-.oo-unit{font-size:.85rem;color:var(--text);font-style:italic;font-family:'Cormorant Garamond',serif;margin-top:2px}
-.oo-people{font-size:11px;color:rgba(255,255,255,.6);margin-top:10px;letter-spacing:.06em}
+        .option-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
 
-.achievement{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
-.ach-item{display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--line)}
-.ach-item:last-child{border-bottom:none}
-.ach-icon{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
-.ach-body{flex:1}
-.ach-num{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:300;color:var(--text);line-height:1}
-.ach-num span{font-size:.8rem;color:var(--muted)}
-.ach-desc{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.55}
+        .option-btn:hover {
+            background: rgba(0, 255, 204, 0.08);
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+        }
 
-.contrib-card{background:rgba(192,136,40,.06);border:1px solid rgba(192,136,40,.18);
-  border-radius:14px;padding:18px 20px;margin-bottom:14px}
-.contrib-icon{font-size:1.1rem;color:var(--gilt);margin-bottom:8px}
-.contrib-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;color:var(--gilt);margin-bottom:6px}
-.contrib-body{font-size:12.5px;color:var(--muted);line-height:1.9}
-.contrib-body strong{color:var(--sage);font-weight:400}
+        /* 結果画面 */
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .result-modi-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 0, 127, 0.15);
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-neon);
+            margin-bottom: 6px;
+        }
+        .result-desc {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.2);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
 
-.feed{display:flex;flex-direction:column;gap:6px}
-.feed-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.02);
-  border:1px solid var(--line);border-radius:10px;padding:10px 14px;
-  opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
-.feed-item.show{opacity:1;transform:translateY(0)}
-.feed-item.me{background:rgba(226,184,106,.08);border-color:rgba(226,184,106,.25)}
-.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.feed-text{font-size:12px;color:var(--muted);flex:1;line-height:1.5}
-.feed-text strong{color:var(--text);font-weight:400}
-.feed-time{font-size:9.5px;color:var(--muted);opacity:.75;flex-shrink:0}
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--accent-neon);
+            padding-left: 8px;
+        }
+        .place-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .place-info h4 { font-size: 0.9rem; margin-bottom: 4px; }
+        .place-info p { font-size: 0.75rem; color: var(--text-muted); }
+        .map-link {
+            background: #4285F4;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
 
-/* history dots */
-.dots-card{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
-.dots-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
-.hdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.mat-row{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);margin-bottom:7px;letter-spacing:.08em}
-.mat-track{height:2px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-bottom:14px}
-.mat-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--moss),var(--gilt));transition:width .8s}
-
-/* send button */
-.btn-emit{width:100%;background:var(--forest);color:rgba(255,255,255,.9);border:none;
-  padding:16px;border-radius:12px;font-family:'DM Mono',monospace;font-weight:300;
-  font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
-  transition:background .25s;box-shadow:0 2px 16px rgba(27,53,40,.25);margin-bottom:14px}
-.btn-emit:hover{background:var(--moss)}
-.btn-emit:active{transform:scale(.98)}
-.btn-emit:disabled{opacity:.5}
-
-footer{text-align:center;padding-top:22px;margin-top:18px;border-top:1px solid var(--line)}
-.foot-note{font-size:9px;color:var(--muted);letter-spacing:.1em;line-height:2}
-.foot-note em{color:var(--sage);font-style:normal}
-
-/* ════ ONBOARDING ════ */
-.onboard{position:fixed;inset:0;z-index:300;background:var(--ink);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:32px 28px;text-align:center;overflow-y:auto}
-.onboard.hidden{display:none}
-.ob-inner{max-width:360px;width:100%;animation:up .8s cubic-bezier(.4,0,.2,1) both}
-.ob-logo{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:300;
-  letter-spacing:.1em;color:var(--gilt);line-height:1;margin-bottom:10px}
-.ob-tagline{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;
-  color:var(--text);line-height:1.7;margin-bottom:8px}
-.ob-tagline em{color:var(--gilt)}
-.ob-lead{font-size:12px;color:var(--muted);line-height:1.9;margin-bottom:36px}
-.ob-field{text-align:left;margin-bottom:22px}
-.ob-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);
-  margin-bottom:10px;display:block}
-.ob-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);
-  border-radius:12px;padding:14px 16px;color:var(--text);
-  font-family:'DM Mono',monospace;font-size:14px;font-weight:300;outline:none;
-  transition:border-color .2s}
-.ob-input:focus{border-color:var(--gilt)}
-.ob-input::placeholder{color:var(--muted);opacity:.6}
-.ob-chips{display:flex;flex-wrap:wrap;gap:8px}
-.ob-chip{flex:0 0 auto;background:rgba(255,255,255,.04);border:1px solid var(--line);
-  border-radius:99px;padding:9px 16px;color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;
-  transition:all .2s;user-select:none}
-.ob-chip:hover{border-color:rgba(226,184,106,.4)}
-.ob-chip.selected{background:rgba(226,184,106,.12);border-color:var(--gilt);color:var(--gilt)}
-.ob-btn{width:100%;background:var(--forest);color:rgba(255,255,255,.92);border:none;
-  padding:16px;border-radius:12px;font-family:'DM Mono',monospace;font-weight:300;
-  font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
-  transition:background .25s,opacity .2s;margin-top:14px;box-shadow:0 2px 16px rgba(27,53,40,.3)}
-.ob-btn:hover{background:var(--moss)}
-.ob-btn:disabled{opacity:.4;cursor:default}
-.ob-skip{display:block;margin:16px auto 0;background:none;border:none;color:var(--muted);
-  font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;
-  text-decoration:underline;text-underline-offset:3px}
-.ob-note{font-size:10px;color:var(--muted);opacity:.7;line-height:1.7;margin-top:18px}
-
-</style>
+        /* SNSシェアエリア */
+        .share-box {
+            background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 24px;
+            margin-bottom: 16px;
+        }
+        .share-box .mock-card {
+            background: rgba(11, 15, 25, 0.9);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-insta {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- ════════ ONBOARDING ════════ -->
-<div class="onboard" id="onboard">
-  <div class="ob-inner">
-    <div class="ob-logo">Lum</div>
-    <div class="ob-tagline">歩くことは、<em>静かな利他だ</em>。</div>
-    <div class="ob-lead">あなたの歩みが、医療費を削り、誰かの画材になる。<br>はじめに、あなたのことを少しだけ教えてください。</div>
+<div class="container">
+    
+    <div id="screen-start" class="screen active">
+        <h1 class="logo">Fit-Modi</h1>
+        <p class="tagline">FIND YOUR FITNESS MODE</p>
+        
+        <div style="text-align: center; margin-bottom: 32px;">
+            <p style="font-size: 0.9rem; line-height: 1.6; color: #b4c3f0;">12の質問から、あなたの性格・メンタルに溶け込む最適なフィットネスを特定します。</p>
+        </div>
 
-    <div class="ob-field">
-      <label class="ob-label">ニックネーム</label>
-      <input type="text" class="ob-input" id="ob-name" placeholder="例：はるか" maxlength="12" oninput="checkOnboard()">
+        <div class="form-group">
+            <label for="zipcode"><i class="fa-solid fa-location-dot" style="color: var(--accent-neon)"></i> 付近のスタジオを探すため、郵便番号を入力（半角数字7桁）</label>
+            <input type="text" id="zipcode" placeholder="1070062" maxlength="7">
+            <p id="zip-error" style="color: var(--accent-pink); font-size: 0.8rem; margin-top: 8px; display: none; text-align: center;">※郵便番号を7桁の数字で入力してください</p>
+        </div>
+
+        <button class="btn-primary" onclick="startQuiz()">診断をスタートする</button>
     </div>
 
-    <div class="ob-field">
-      <label class="ob-label">お住まいの地域</label>
-      <div class="ob-chips" id="ob-regions"></div>
+    <div id="screen-quiz" class="screen">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div id="question-number" style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; font-family: 'Montserrat'; font-weight: 700;">Q 1/12</div>
+        <div id="question-text" class="question-text">読み込み中...</div>
+        
+        <div class="options-list">
+            <button class="option-btn" onclick="nextQuestion(3)">とてもそう思う <i class="fa-solid fa-chevron-right" style="color: var(--accent-neon)"></i></button>
+            <button class="option-btn" onclick="nextQuestion(2)">まあそう思う <i class="fa-solid fa-chevron-right" style="color: var(--accent-neon)"></i></button>
+            <button class="option-btn" onclick="nextQuestion(1)">あまり思わない <i class="fa-solid fa-chevron-right" style="color: var(--accent-neon)"></i></button>
+            <button class="option-btn" onclick="nextQuestion(0)">全く思わない <i class="fa-solid fa-chevron-right" style="color: var(--accent-neon)"></i></button>
+        </div>
     </div>
 
-    <div class="ob-field">
-      <label class="ob-label">年代</label>
-      <div class="ob-chips" id="ob-ages"></div>
+    <div id="screen-result" class="screen">
+        <div class="result-header">
+            <span class="result-modi-badge">YOUR FIT-MODI STYLE</span>
+            <div id="result-title" class="result-title">-</div>
+            <div id="result-subtitle" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">-</div>
+        </div>
+
+        <div id="result-desc" class="result-desc">-</div>
+
+        <div class="section-title">📍 <span id="display-zip"></span> 周辺の推奨スポット</div>
+        <div id="places-container"></div>
+
+        <div class="share-box">
+            <div class="mock-card">
+                <p style="font-size: 0.65rem; color: #8fa0dd; text-transform: uppercase; letter-spacing: 1px;">My Fit-Modi Type</p>
+                <h5 id="share-title" style="font-size: 1.3rem; color: var(--accent-neon); margin: 6px 0;">-</h5>
+                <p style="font-size: 0.75rem; color: var(--accent-pink);">#FitModi #フィットネス診断</p>
+            </div>
+            <button class="btn-insta" onclick="shareToInstagram()">
+                <i class="fa-brands fa-instagram"></i> ストーリーでシェアする
+            </button>
+        </div>
+        
+        <button class="btn-primary" style="background: rgba(255,255,255,0.08); color: #fff; box-shadow: none; margin-top: 12px;" onclick="location.reload()">もう一度診断する</button>
     </div>
-
-    <button class="ob-btn" id="ob-submit" onclick="completeOnboard()" disabled>Lumを、はじめる</button>
-    <button class="ob-skip" onclick="skipOnboard()">あとで設定する</button>
-    <div class="ob-note">この情報は「みんなの光」で、あなたの歩みを<br>コミュニティの一部として表示するために使われます。</div>
-  </div>
-</div>
-
-<div class="app">
-
-<header class="u">
-  <div class="logo">Lum</div>
-  <div class="logo-sub" id="header-sub">あなたの歩みが、世界を照らす</div>
-</header>
-
-<!-- ════════ VIEW: TODAY (記録) ════════ -->
-<div class="view active" id="view-today">
-
-  <!-- input zone -->
-  <div class="input-zone" id="input-zone" onclick="document.getElementById('file-input').click()">
-    <div class="iz-icon">
-      <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-    </div>
-    <div class="iz-title">今日の歩数スクリーンショットを捧げる</div>
-    <div class="iz-sub">ヘルスケア画面のキャプチャから読み取ります<br>（改ざん防止のため、画像での記録をお願いしています）</div>
-    <input type="file" id="file-input" accept="image/*" onchange="processShot()">
-  </div>
-  <div class="manual-link">
-    <button onclick="manualInput()">スクショが無い場合は、こちら</button>
-  </div>
-
-  <!-- processing -->
-  <div class="processing" id="processing">
-    <div class="proc-ring"></div>
-    <div class="proc-text" id="proc-text">歩数を読み取っています...</div>
-  </div>
-
-  <!-- result -->
-  <div class="result-card" id="result-card">
-    <div class="rc-label">今日、あなたが灯した光</div>
-    <div class="rc-steps"><span id="rc-steps">0</span><span> 歩</span></div>
-    <div class="rc-lumen" id="rc-lumen">0.0</div>
-    <div class="rc-unit">Lumen</div>
-    <div class="rc-bonus" id="rc-bonus"></div>
-  </div>
-
-  <!-- life canvas -->
-  <div class="canvas-frame">
-    <canvas id="life-canvas" width="480" height="480"></canvas>
-    <div class="cf-ui">
-      <div class="cf-top">
-        <span class="cf-date" id="cf-date"></span>
-        <span class="cf-lumen" id="cf-lumen"></span>
-      </div>
-      <div>
-        <p class="cf-poem" id="cf-poem">今日の歩数を捧げて、キャンバスに光を灯してください。</p>
-        <p class="cf-note" id="cf-note"></p>
-      </div>
-    </div>
-    <div id="cf-flash"></div>
-  </div>
-
-  <!-- stats -->
-  <div class="stat-row">
-    <div class="stat-cell"><div class="stat-v" id="st-delta">—</div><div class="stat-k">平均との差</div></div>
-    <div class="stat-cell"><div class="stat-v gold" id="st-lumen">—</div><div class="stat-k">今日のLumen</div></div>
-    <div class="stat-cell"><div class="stat-v" id="st-level">—</div><div class="stat-k">今日のレベル</div></div>
-  </div>
-
-  <!-- maturity + dots -->
-  <div class="dots-card">
-    <div class="mat-row"><span>キャンバス成熟度</span><span id="mat-pct">0%</span></div>
-    <div class="mat-track"><div class="mat-fill" id="mat-fill" style="width:1%"></div></div>
-    <div class="dots-row" id="dots-row"></div>
-  </div>
 
 </div>
-
-<!-- ════════ VIEW: CIRCULATION (循環) ════════ -->
-<div class="view" id="view-circ">
-
-  <div class="sec-label">今日の光が、世界へ流れる</div>
-  <div class="circ-card">
-    <div class="flow-step">
-      <div class="fs-dot" style="background:var(--sage)"></div>
-      <div class="fs-body"><div class="fs-title">あなたが歩く</div><div class="fs-desc">毎日の歩みが、未来の医療費を削る</div></div>
-      <div class="fs-val" id="cv-steps">—</div>
-    </div>
-    <div class="flow-step">
-      <div class="fs-dot" style="background:var(--gilt)"></div>
-      <div class="fs-body"><div class="fs-title">Lumに変換される</div><div class="fs-desc">削れた医療費が、光の単位「Lumen」に</div></div>
-      <div class="fs-val" id="cv-lumen">—</div>
-    </div>
-    <div class="flow-step">
-      <div class="fs-dot" style="background:var(--moss)"></div>
-      <div class="fs-body"><div class="fs-title">アートと福祉へ流れる</div><div class="fs-desc">子どもの画材・障がい者アート・地域緑化へ</div></div>
-      <div class="fs-val">∞</div>
-    </div>
-  </div>
-
-  <div class="sec-label">この光の行き先（社会還元）</div>
-  <div class="alloc-card">
-    <div class="al-row"><div class="al-name">子どもへの画材</div>
-      <div class="al-track"><div class="al-fill" id="al1" style="background:var(--moss)"></div></div>
-      <div class="al-val">60%</div></div>
-    <div class="al-row"><div class="al-name">障がい者アート支援</div>
-      <div class="al-track"><div class="al-fill" id="al2" style="background:var(--sage)"></div></div>
-      <div class="al-val">25%</div></div>
-    <div class="al-row"><div class="al-name">地域緑化</div>
-      <div class="al-track"><div class="al-fill" id="al3" style="background:var(--gilt)"></div></div>
-      <div class="al-val">15%</div></div>
-  </div>
-
-  <div class="infinite">
-    <div class="inf-icon">∞</div>
-    <div class="inf-title">この光は、消えない</div>
-    <div class="inf-body">Lumはポイントではありません。貯めて、使って、ゼロに戻るものではない。<br><br>
-      あなたが歩くたびに光は<strong>絶え間なく社会へ流れ続け</strong>、累計は減ることなく増え続けます。これは消費ではなく、<strong>あなたが世界に灯し続ける、終わらない循環</strong>です。</div>
-  </div>
-
-  <button class="btn-emit" id="btn-emit" onclick="emitLight()">この光を、世界へ放つ</button>
-
-</div>
-
-<!-- ════════ VIEW: COMMUNITY (みんなの光) ════════ -->
-<div class="view" id="view-comm">
-
-  <div class="you-card">
-    <div class="you-label">あなたは、ひとりではない</div>
-    <div class="you-text" id="you-text">いま、<em>12,847人</em>が<br>世界のどこかで歩いています。</div>
-  </div>
-
-  <div class="community-orb">
-    <canvas id="comm-canvas" width="480" height="480"></canvas>
-    <div class="orb-overlay">
-      <div class="oo-label">今月、みんなで灯した光</div>
-      <div class="oo-num" id="comm-lumen">1,402,580</div>
-      <div class="oo-unit">Lumen</div>
-      <div class="oo-people">12,847人が、今この瞬間も歩いている</div>
-    </div>
-  </div>
-
-  <div class="sec-label">この光が、世界に生んだもの（今月）</div>
-  <div class="achievement">
-    <div class="ach-item"><div class="ach-icon" style="background:rgba(58,102,80,.15);color:var(--sage)">🎨</div>
-      <div class="ach-body"><div class="ach-num" id="ach1">38<span> 校</span></div>
-        <div class="ach-desc">特別支援学校のアトリエに、画材一式を届けた</div></div></div>
-    <div class="ach-item"><div class="ach-icon" style="background:rgba(110,158,130,.15);color:var(--sage)">🖌️</div>
-      <div class="ach-body"><div class="ach-num" id="ach2">214<span> 人</span></div>
-        <div class="ach-desc">障がいを持つアーティストに、プロ用画材を支援</div></div></div>
-    <div class="ach-item"><div class="ach-icon" style="background:rgba(192,136,40,.15);color:var(--gilt)">🌱</div>
-      <div class="ach-body"><div class="ach-num" id="ach3">9,600<span> 本</span></div>
-        <div class="ach-desc">在来種の苗木を、全国の里山に植えた</div></div></div>
-    <div class="ach-item"><div class="ach-icon" style="background:rgba(226,184,106,.15);color:var(--gilt)">🖼️</div>
-      <div class="ach-body"><div class="ach-num" id="ach4">127<span> 点</span></div>
-        <div class="ach-desc">子どもたちが描いた作品が、生まれた</div></div></div>
-  </div>
-
-  <div class="contrib-card">
-    <div class="contrib-icon">✦</div>
-    <div class="contrib-title">あなたの歩みも、この中にある</div>
-    <div class="contrib-body" id="contrib-body">
-      今日の歩数を捧げると、あなたの光がこの巨大な循環に加わります。一人では小さくても、<strong>12,847人</strong>が集まれば特別支援学校38校を支えられる。</div>
-  </div>
-
-  <div class="sec-label">いま、世界で灯っている光</div>
-  <div class="feed" id="feed"></div>
-
-</div>
-
-<footer>
-  <div class="foot-note">
-    <em>究極の利他は、利己と一致する。</em><br>
-    あなたが健康であるほど、世界は美しくなる。<br>
-    Lum — Walking × Art × Altruism
-  </div>
-</footer>
-
-</div>
-
-<!-- ════════ TAB BAR ════════ -->
-<nav class="tabbar">
-  <button class="tab active" data-view="today" onclick="switchView('today',this)">
-    <svg viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="4"/></svg>
-    <span>今日</span>
-  </button>
-  <button class="tab" data-view="circ" onclick="switchView('circ',this)">
-    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.2-8.5"/><path d="M21 3v6h-6"/></svg>
-    <span>循環</span>
-  </button>
-  <button class="tab" data-view="comm" onclick="switchView('comm',this)">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5.5 21a6.5 6.5 0 0113 0"/></svg>
-    <span>みんなの光</span>
-  </button>
-</nav>
 
 <script>
-// ════════════════════════════════════════
-// Lumen 加点傾斜アルゴリズム
-// ════════════════════════════════════════
-const BASE=6100, RATE_BASE=0.001, RATE_BONUS=0.0025;
-const YEN_PER_STEP=35000/1500;  // 年間医療費（内部計算用・非表示）
+    const questions = [
+        "運動するなら1人で黙々と音楽に没頭したい",
+        "予定のない休日は家でゆっくり過ごすのが1番回復する",
+        "体を変えるなら体重や筋肉量などの「数字」にこだわりたい",
+        "運動した翌日に筋肉痛がないとぶっちゃけ物足りない",
+        "ゲームや趣味は、ストーリーより効率的な「攻略」が好きだ",
+        "ストレスが溜まったら、何かを叩いたり叫んだりして発散したい",
+        "流行りのスポットや新しい体験にはとりあえず乗っかりたい",
+        "運動しているときの「他人の目」はけっけう気になる",
+        "毎日おなじルーティン（決まった流れ）をこなす方が安心する",
+        "自然（緑・海・風）に触れると格別に心が洗われる感覚がある",
+        "忙しい時期ほど、あえて頭を空っぽにする時間が欲しい",
+        "運動は「限界への挑戦」というより「明日への投資」だ"
+    ];
 
-function calcLumen(steps){
-  if(steps<=BASE) return steps*RATE_BASE;
-  return BASE*RATE_BASE + (steps-BASE)*RATE_BONUS;
-}
-function calcBrightness(lumen){ return Math.min(1, 0.4 + (lumen/28.4)*0.6); }
+    const modiTypes = {
+        zen: {
+            title: "🌿 Zen-Chill (ゼン・チル)",
+            subtitle: "「内省 × リラックス × マイペース」",
+            desc: "あなたは数字のプレッシャーや周囲との競争から離れ、自分の心と体に耳を傾けることで回復するタイプ。ガチガチの筋トレより、ピラティスやヨガ、静かなウォーキングが脳と体にフィットします。",
+            keywords: ["ピラティス", "ヨガスタジオ"]
+        },
+        beast: {
+            title: "⚡️ Active-Striker",
+            subtitle: "「限界突破 × 結果主義 × ストイック」",
+            desc: "あなたは自分を追い込み、限界を超えた先の達成感に最も快感を覚えるタイプ。筋肉痛はご褒美。HIITや暗闇ボクササイズ、クロスフィットなどで思い切り汗を流すのが最高にフィットします。",
+            keywords: ["暗闇ボクササイズ", "24時間ジム"]
+        },
+        party: {
+            title: "🔥 Groove-Runner",
+            subtitle: "「エンタメ × コミュニティ × トレンド」",
+            desc: "1人の単調な運動はすぐ飽きてしまうタイプ。音楽、演出、あるいは仲間との一体感があって初めてモチベが爆発します。ZUMBAなどのダンス系、最新のサイクルフィットネスがおすすめです。",
+            keywords: ["インドアサイクル", "ダンススタジオ"]
+        }
+    };
 
-const LV=[
-  {min:0,    name:'瞑想',bg:['#0d0b1f','#1e1b4b','#0f172a'],p:['rgba(99,102,241,','rgba(165,180,252,']},
-  {min:2000, name:'内省',bg:['#130820','#2e1065','#1a0a2e'],p:['rgba(139,92,246,','rgba(196,181,253,']},
-  {min:5000, name:'調律',bg:['#041510','#0d3320','#0a1f18'],p:['rgba(58,102,80,', 'rgba(110,158,130,']},
-  {min:8000, name:'共鳴',bg:['#030d10','#0c2a30','#052025'],p:['rgba(14,116,144,','rgba(34,211,238,']},
-  {min:12000,name:'超越',bg:['#1a0e00','#3d2200','#1a0f05'],p:['rgba(192,136,40,','rgba(226,184,106,']},
-  {min:16000,name:'神話',bg:['#1a0010','#4c0020','#1a0505'],p:['rgba(225,29,72,', 'rgba(251,113,133,']},
-];
-const DC=['#6366f1','#8b5cf6','#3a6650','#0e7490','#c08828','#e11d48'];
-const POEMS=[
-  v=>`「静止の${v}歩。余白が、深みになる。」`,
-  v=>`「${v}歩の朝。炎が、静かに燃える。」`,
-  v=>`「調律の${v}歩。森の呼吸と重なる。」`,
-  v=>`「共鳴の${v}歩。光の波紋が広がった。」`,
-  v=>`「超越の${v}歩。黄金の軌跡が走る。」`,
-  v=>`「神話の${v}歩。伝説はもう始まっている。」`,
-];
-const GIFTS=['地域の緑へ：苗木の種1粒','地域の緑へ：苗木の種2粒',
-  '特別支援学校へ：青のクレヨン1本分','アート教室へ：画用紙＋水彩1色',
-  '障がい者アート団体へ：ウルトラマリン1本分','子どもたちへ：画材フルセット'];
+    let currentQuestionIdx = 0;
+    let totalScore = 0;
+    let userZipcode = "";
 
-function gl(v){return LV.slice().reverse().find(l=>v>=l.min)||LV[0]}
-function gt(v){return LV.indexOf(gl(v))}
-function f(n){return Number(n).toLocaleString()}
-function rng(s){let x=s|0;return()=>{x=(x*1664525+1013904223)&0xffffffff;return(x>>>0)/0xffffffff}}
-function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`}
-function ld(){try{return JSON.parse(localStorage.getItem('lum6')||'[]')}catch{return[]}}
-function sv(h){try{localStorage.setItem('lum6',JSON.stringify(h))}catch{}}
+    function startQuiz() {
+        const zipInput = document.getElementById('zipcode').value.trim();
+        // 簡易的な7桁数字チェック
+        if(zipInput.length !== 7 || isNaN(zipInput)) {
+            document.getElementById('zip-error').style.display = 'block';
+            return;
+        }
+        document.getElementById('zip-error').style.display = 'none';
+        userZipcode = zipInput;
 
-let H=ld();
-let detectedSteps=0, todayLumen=0, emitted=false;
-
-// ════════════════════════════════════════
-// view switching
-// ════════════════════════════════════════
-function switchView(name,btn){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  window.scrollTo(0,0);
-  if(name==='comm') ensureCommOrb();
-}
-
-// ════════════════════════════════════════
-// スクショ処理（OCRモック）
-// ════════════════════════════════════════
-function processShot(){
-  document.getElementById('input-zone').style.display='none';
-  document.querySelector('.manual-link').style.display='none';
-  document.getElementById('processing').classList.add('show');
-  const msgs=['歩数を読み取っています...','数値を解析しています...','光に変換しています...'];
-  let mi=0; const pt=document.getElementById('proc-text');
-  const iv=setInterval(()=>{mi++;if(mi<msgs.length)pt.textContent=msgs[mi]},700);
-  setTimeout(()=>{
-    clearInterval(iv);
-    detectedSteps=7000+Math.floor(Math.random()*6000);
-    document.getElementById('processing').classList.remove('show');
-    recordSteps(detectedSteps);
-  },2200);
-}
-function manualInput(){
-  const v=prompt('今日の歩数を入力してください（テスト用）');
-  const s=parseInt(v);
-  if(s&&s>0&&s<=50000){
-    document.getElementById('input-zone').style.display='none';
-    document.querySelector('.manual-link').style.display='none';
-    detectedSteps=s; recordSteps(s);
-  }
-}
-
-// ════════════════════════════════════════
-// 記録処理
-// ════════════════════════════════════════
-function recordSteps(steps){
-  const today=new Date().toISOString().slice(0,10);
-  const idx=H.findIndex(h=>h.date===today);
-  if(idx>=0)H[idx].steps=steps; else H.push({date:today,steps});
-  sv(H);
-
-  todayLumen=calcLumen(steps);
-  const tier=gt(steps);
-  const delta=steps-BASE;
-
-  // result card
-  document.getElementById('result-card').classList.add('show');
-  animNum('rc-steps',steps,1200);
-  animNumF('rc-lumen',todayLumen,1400,1);
-  setTimeout(()=>{
-    const bonus=document.getElementById('rc-bonus');
-    if(delta>0) bonus.textContent=`✦ 平均を ${f(delta)}歩 超えた分が、2.5倍の光に`;
-    else if(delta===0) bonus.textContent='✦ ちょうど平均ライン。今日も灯った';
-    else bonus.textContent='静かな日も、光は消えない';
-    bonus.classList.add('show');
-  },1500);
-
-  // canvas overlay
-  document.getElementById('cf-lumen').textContent=todayLumen.toFixed(1)+' Lm';
-  document.getElementById('cf-poem').textContent=POEMS[tier](f(steps));
-  document.getElementById('cf-note').textContent='— '+GIFTS[Math.min(tier,5)];
-
-  // stats
-  document.getElementById('st-delta').textContent=(delta>=0?'+':'')+f(delta);
-  document.getElementById('st-lumen').textContent=todayLumen.toFixed(1);
-  document.getElementById('st-level').textContent=gl(steps).name;
-
-  // circulation view
-  document.getElementById('cv-steps').textContent=f(steps);
-  document.getElementById('cv-lumen').textContent=todayLumen.toFixed(1)+' Lm';
-  setTimeout(()=>{
-    document.getElementById('al1').style.width='100%';
-    document.getElementById('al2').style.width='100%';
-    document.getElementById('al3').style.width='100%';
-  },300);
-
-  // flash
-  const fl=document.getElementById('cf-flash');
-  fl.style.cssText='display:block;animation:none';void fl.offsetWidth;
-  fl.style.animation='glow 1.6s ease-out forwards';
-  setTimeout(()=>fl.style.display='none',1700);
-
-  // community contribution
-  myLight.active=true;
-  myLight.brightness=calcBrightness(todayLumen);
-  myLight.color=delta>0?'#e2b86a':'#6e9e82';
-  liveLumen+=todayLumen;
-  document.getElementById('contrib-body').innerHTML=
-    `あなたが今日歩いた <strong>${f(steps)}歩</strong> は、この巨大な光の<strong>確かな一部</strong>になりました。あなたの一歩がなければ、この光は少しだけ暗かった。`;
-  addFeed(true,steps);
-
-  drawLifeCanvas();
-  updMaturity();
-}
-
-// ════════════════════════════════════════
-// number animations
-// ════════════════════════════════════════
-function animNum(id,to,dur){const el=document.getElementById(id);const s=performance.now();
-  (function st(n){const p=Math.min(1,(n-s)/dur),e=1-Math.pow(1-p,3);el.textContent=f(Math.round(to*e));if(p<1)requestAnimationFrame(st)})(s)}
-function animNumF(id,to,dur,d){const el=document.getElementById(id);const s=performance.now();
-  (function st(n){const p=Math.min(1,(n-s)/dur),e=1-Math.pow(1-p,3);el.textContent=(to*e).toFixed(d);if(p<1)requestAnimationFrame(st)})(s)}
-function animSpan(id,to,dur,sfx){const el=document.getElementById(id);const s=performance.now();
-  (function st(n){const p=Math.min(1,(n-s)/dur),e=1-Math.pow(1-p,3);el.innerHTML=f(Math.round(to*e))+sfx;if(p<1)requestAnimationFrame(st)})(s)}
-
-// ════════════════════════════════════════
-// maturity + dots
-// ════════════════════════════════════════
-function updMaturity(){
-  const days=H.length||0;
-  const mat=Math.min(100,Math.round(days/365*100));
-  document.getElementById('mat-fill').style.width=Math.max(1,mat)+'%';
-  document.getElementById('mat-pct').textContent=mat+'%';
-  const dw=document.getElementById('dots-row'); dw.innerHTML='';
-  H.slice(-60).forEach(h=>{const d=document.createElement('div');d.className='hdot';
-    d.style.cssText=`background:${DC[Math.min(gt(h.steps),5)]};opacity:${.4+gt(h.steps)*.09}`;
-    d.title=h.date+' '+f(h.steps)+'歩';dw.appendChild(d)});
-}
-
-// ════════════════════════════════════════
-// emit light
-// ════════════════════════════════════════
-function emitLight(){
-  if(emitted){switchView('comm',document.querySelectorAll('.tab')[2]);return}
-  if(todayLumen<=0){alert('まず今日の歩数を記録してください');switchView('today',document.querySelectorAll('.tab')[0]);return}
-  emitted=true;
-  const btn=document.getElementById('btn-emit');
-  btn.textContent='世界へ届いています...'; btn.disabled=true;
-  setTimeout(()=>{
-    btn.textContent='✦ 光が、世界へ届きました'; btn.disabled=false;
-    btn.onclick=()=>switchView('comm',document.querySelectorAll('.tab')[2]);
-    setTimeout(()=>{btn.textContent='みんなの光を見る →'},2000);
-  },1600);
-}
-
-// ════════════════════════════════════════
-// life canvas
-// ════════════════════════════════════════
-function drawLifeCanvas(){
-  const cv=document.getElementById('life-canvas');const ctx=cv.getContext('2d');
-  const W=cv.width,HH=cv.height;
-  const ents=H.length>0?H:[{date:'demo',steps:0}];
-  const days=ents.length;const tot=ents.reduce((s,e)=>s+e.steps,0);
-  const mat=Math.min(1,days/365);const avgS=Math.round(tot/days)||1;
-  const lv=gl(avgS);const tier=gt(avgS);
-  ctx.clearRect(0,0,W,HH);
-  const g=ctx.createLinearGradient(0,0,W,HH);
-  g.addColorStop(0,lv.bg[0]);g.addColorStop(.5,lv.bg[1]);g.addColorStop(1,lv.bg[2]);
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,HH);
-  ents.forEach((e,i)=>{
-    const seed=e.steps*31+(e.date==='demo'?new Date().getDate():new Date(e.date).getDate())*137+i*71;
-    const r=rng(seed);const et=gt(e.steps);const ep=LV[Math.min(et,5)].p;const dens=0.3+mat*.7;
-    if(i===ents.length-1||r()>.55){
-      const cx2=r()*W,cy2=r()*HH,rv=55+r()*(85+et*14);
-      const rg=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,rv);
-      rg.addColorStop(0,ep[0]+(0.13+dens*.22)+')');rg.addColorStop(1,ep[0]+'0)');
-      ctx.beginPath();ctx.arc(cx2,cy2,rv,0,Math.PI*2);ctx.fillStyle=rg;ctx.fill();
+        document.getElementById('screen-start').classList.remove('active');
+        document.getElementById('screen-quiz').classList.add('active');
+        showQuestion();
     }
-    const lc=1+Math.floor(r()*2*(0.5+mat));
-    for(let l=0;l<lc;l++){let x=r()*W,y=r()*HH;ctx.beginPath();ctx.moveTo(x,y);
-      for(let s=0;s<8+Math.floor(e.steps/900)+(mat*8|0);s++){
-        const a=(r()-.5)*Math.PI*(.9+et*.15);
-        x=Math.max(0,Math.min(W,x+Math.cos(a)*(6+r()*16)));
-        y=Math.max(0,Math.min(HH,y+Math.sin(a)*(6+r()*16)));ctx.lineTo(x,y)}
-      ctx.strokeStyle=ep[l%2]+(0.06+r()*.18)+')';ctx.lineWidth=.4+r()*(1+mat*.5);ctx.stroke()}
-    const pts=Math.floor(e.steps/200*dens)+3;
-    for(let j=0;j<pts;j++){ctx.beginPath();ctx.arc(r()*W,r()*HH,r()*(1.8+et*.3),0,Math.PI*2);
-      ctx.fillStyle=ep[Math.floor(r()*2)]+(r()*.45+.1)+')';ctx.fill()}
-  });
-  if(mat>.15){const r2=rng(tot+days*53);
-    for(let i=0;i<Math.floor(mat*4)+1;i++){const ss=5+tier+Math.floor(mat*3),cx2=r2()*W,cy2=r2()*HH,rv=14+r2()*(38+mat*38);
-      ctx.beginPath();for(let j=0;j<=ss;j++){const a=j/ss*Math.PI*2;j?ctx.lineTo(cx2+Math.cos(a)*rv,cy2+Math.sin(a)*rv):ctx.moveTo(cx2+Math.cos(a)*rv,cy2+Math.sin(a)*rv)}
-      ctx.closePath();ctx.strokeStyle=lv.p[1]+(0.04+mat*.11)+')';ctx.lineWidth=.5;ctx.stroke()}}
-  ctx.fillStyle='rgba(226,184,106,.13)';ctx.fillRect(W-3,HH-HH*mat,3,HH*mat);
-  ctx.font='300 9px "DM Mono",monospace';ctx.fillStyle='rgba(255,255,255,.12)';
-  ctx.fillText(tot>0?f(tot)+'歩/'+days+'日':'',12,HH-12);
-  ctx.textAlign='right';ctx.font='300 italic 9px "Cormorant Garamond",serif';
-  ctx.fillStyle='rgba(255,255,255,.14)';ctx.fillText('Lum',W-12,HH-12);ctx.textAlign='left';
-}
 
-// ════════════════════════════════════════
-// community orb
-// ════════════════════════════════════════
-let commCtx,commStarted=false,lights=[],myLight,commTick=0,liveLumen=1402580;
-function ensureCommOrb(){
-  if(commStarted)return; commStarted=true;
-  const canvas=document.getElementById('comm-canvas');
-  commCtx=canvas.getContext('2d');
-  const W=canvas.width,H2=canvas.height,cx=W/2,cy=H2/2;
-  const N=180;
-  for(let i=0;i<N;i++){const angle=Math.random()*Math.PI*2,dist=Math.pow(Math.random(),0.6)*W*0.42;
-    lights.push({angle,dist,speed:0.0008+Math.random()*0.0015,r:0.8+Math.random()*2.2,
-      phase:Math.random()*Math.PI*2,color:['#3a6650','#6e9e82','#c08828','#e2b86a','#88b89a'][Math.floor(Math.random()*5)],isMe:false})}
-  lights.unshift(myLight);
-  (function draw(){requestAnimationFrame(draw);commTick++;
-    commCtx.fillStyle='rgba(10,15,12,0.18)';commCtx.fillRect(0,0,W,H2);
-    const pulse=1+Math.sin(commTick*0.02)*0.1;
-    const cg=commCtx.createRadialGradient(cx,cy,0,cx,cy,W*0.4*pulse);
-    cg.addColorStop(0,'rgba(226,184,106,.12)');cg.addColorStop(.5,'rgba(58,102,80,.06)');cg.addColorStop(1,'rgba(10,15,12,0)');
-    commCtx.fillStyle=cg;commCtx.fillRect(0,0,W,H2);
-    lights.forEach(l=>{l.angle+=l.speed;
-      if(l.isMe&&l.active&&l.dist>W*0.16)l.dist-=1.2;
-      const x=cx+Math.cos(l.angle)*l.dist,y=cy+Math.sin(l.angle)*l.dist;
-      const flick=0.6+Math.sin(commTick*0.05+l.phase)*0.4;
-      if(l.isMe&&!l.active)return;
-      const meB=l.isMe?(l.brightness||0.3):1, sm=l.isMe?(6+l.brightness*6):5;
-      const g=commCtx.createRadialGradient(x,y,0,x,y,l.r*sm);
-      g.addColorStop(0,hexA(l.color,(l.isMe?.95:.6)*flick*meB));g.addColorStop(1,hexA(l.color,0));
-      commCtx.beginPath();commCtx.arc(x,y,l.r*sm,0,Math.PI*2);commCtx.fillStyle=g;commCtx.fill();
-      commCtx.beginPath();commCtx.arc(x,y,l.r,0,Math.PI*2);commCtx.fillStyle=hexA(l.color,flick*meB);commCtx.fill();
-      if(l.isMe&&l.active){commCtx.beginPath();commCtx.arc(x,y,l.r*3.5,0,Math.PI*2);
-        commCtx.strokeStyle=hexA('#e2b86a',.35*flick);commCtx.lineWidth=1;commCtx.stroke()}
-    });
-  })();
-}
-myLight={angle:0,dist:240*0.5,speed:0.0012,r:1,phase:0,color:'#e2b86a',isMe:true,brightness:0,active:false};
+    function showQuestion() {
+        document.getElementById('question-number').innerText = `Q ${currentQuestionIdx + 1}/12`;
+        document.getElementById('question-text').innerText = questions[currentQuestionIdx];
+        
+        const progressPercent = (currentQuestionIdx / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + "%";
+    }
 
-setInterval(()=>{liveLumen+=Math.floor(Math.random()*40+8);
-  const el=document.getElementById('comm-lumen');if(el)el.textContent=Math.round(liveLumen).toLocaleString()},1400);
+    function nextQuestion(score) {
+        totalScore += score;
+        currentQuestionIdx++;
 
-// ════════════════════════════════════════
-// feed
-// ════════════════════════════════════════
-const FEED_NAMES=['東京・40代','大阪・60代','札幌・30代','福岡・50代','名古屋・20代','京都・70代','仙台・40代','広島・60代','横浜・30代','神戸・50代','那覇・40代','金沢・60代'];
-const FEED_ACTIONS=[{t:'さんの光が、クレヨン1本になりました',c:'#3a6650'},{t:'さんの歩みが、苗木の種に変わりました',c:'#c08828'},
-  {t:'さんが、8,200歩を記録しました',c:'#6e9e82'},{t:'さんの光が、画用紙5枚分に',c:'#e2b86a'},{t:'さんが、今日も歩き始めました',c:'#88b89a'}];
-const feedEl=document.getElementById('feed');const MAX_FEED=5;
-function addFeed(isMe,steps){
-  const item=document.createElement('div');item.className='feed-item'+(isMe?' me':'');
-  if(isMe){const lm=calcLumen(steps).toFixed(1);
-    const who=myProfile&&myProfile.region?`あなた（${myProfile.region}・${myProfile.age}）`:'あなた';
-    item.innerHTML=`<div class="feed-dot" style="background:#e2b86a"></div>
-      <div class="feed-text"><strong>${who}</strong>さんの ${f(steps)}歩 が ${lm} Lumen の光に</div><div class="feed-time">now</div>`;
-  }else{const name=FEED_NAMES[Math.floor(Math.random()*FEED_NAMES.length)],action=FEED_ACTIONS[Math.floor(Math.random()*FEED_ACTIONS.length)];
-    item.innerHTML=`<div class="feed-dot" style="background:${action.c}"></div>
-      <div class="feed-text"><strong>${name}</strong>${action.t}</div><div class="feed-time">now</div>`}
-  feedEl.prepend(item);requestAnimationFrame(()=>item.classList.add('show'));
-  const items=feedEl.querySelectorAll('.feed-item');
-  if(items.length>MAX_FEED){const last=items[items.length-1];last.classList.remove('show');setTimeout(()=>last.remove(),500)}
-  feedEl.querySelectorAll('.feed-time').forEach((t,i)=>{if(i>0)t.textContent=(i*2)+'分前'});
-}
+        if(currentQuestionIdx < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
 
+    function showResult() {
+        document.getElementById('screen-quiz').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
 
-// ════════════════════════════════════════
-// オンボーディング
-// ════════════════════════════════════════
-const REGIONS=['北海道','東北','関東','東京','中部','近畿','大阪','中国','四国','九州','沖縄'];
-const AGES=['10代','20代','30代','40代','50代','60代','70代以上'];
-let obRegion='', obAge='';
+        let finalType = modiTypes.zen;
+        if (totalScore > 24) {
+            finalType = modiTypes.beast;
+        } else if (totalScore > 14) {
+            finalType = modiTypes.party;
+        }
 
-function loadProfile(){try{return JSON.parse(localStorage.getItem('lum6_profile')||'null')}catch{return null}}
-function saveProfile(p){try{localStorage.setItem('lum6_profile',JSON.stringify(p))}catch{}}
-let myProfile=loadProfile();
+        document.getElementById('result-title').innerText = finalType.title;
+        document.getElementById('result-subtitle').innerText = finalType.subtitle;
+        document.getElementById('result-desc').innerText = finalType.desc;
+        document.getElementById('display-zip').innerText = "〒" + userZipcode;
+        document.getElementById('share-title').innerText = finalType.title;
 
-function initOnboard(){
-  // チップ生成
-  const rw=document.getElementById('ob-regions');
-  REGIONS.forEach(r=>{const c=document.createElement('div');c.className='ob-chip';c.textContent=r;
-    c.onclick=()=>{document.querySelectorAll('#ob-regions .ob-chip').forEach(x=>x.classList.remove('selected'));
-      c.classList.add('selected');obRegion=r;checkOnboard()};rw.appendChild(c)});
-  const aw=document.getElementById('ob-ages');
-  AGES.forEach(a=>{const c=document.createElement('div');c.className='ob-chip';c.textContent=a;
-    c.onclick=()=>{document.querySelectorAll('#ob-ages .ob-chip').forEach(x=>x.classList.remove('selected'));
-      c.classList.add('selected');obAge=a;checkOnboard()};aw.appendChild(c)});
-}
-function checkOnboard(){
-  const name=document.getElementById('ob-name').value.trim();
-  document.getElementById('ob-submit').disabled=!(name&&obRegion&&obAge);
-}
-function completeOnboard(){
-  const name=document.getElementById('ob-name').value.trim();
-  myProfile={name,region:obRegion,age:obAge};
-  saveProfile(myProfile);
-  document.getElementById('onboard').classList.add('hidden');
-  applyProfile();
-}
-function skipOnboard(){
-  myProfile={name:'あなた',region:'',age:''};
-  saveProfile(myProfile);
-  document.getElementById('onboard').classList.add('hidden');
-  applyProfile();
-}
-function applyProfile(){
-  // ヘッダーや表示に反映（必要なら）
-  if(myProfile && myProfile.region && myProfile.age){
-    const el=document.getElementById('you-text');
-    if(el) el.innerHTML=`いま、<em>12,847人</em>が<br>世界のどこかで歩いています。`;
-  }
-}
+        // おすすめ施設のGoogleマップリンク生成
+        const container = document.getElementById('places-container');
+        container.innerHTML = ""; 
 
-// ════════════════════════════════════════
-// init
-// ════════════════════════════════════════
-window.addEventListener('DOMContentLoaded',()=>{
-  initOnboard();
-  if(myProfile){document.getElementById('onboard').classList.add('hidden');applyProfile();}
-  const d=new Date();
-  document.getElementById('cf-date').textContent=
-    d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');
-  drawLifeCanvas();
-  updMaturity();
-  setTimeout(()=>{
-    animSpan('ach1',38,1000,'<span> 校</span>');animSpan('ach2',214,1200,'<span> 人</span>');
-    animSpan('ach3',9600,1400,'<span> 本</span>');animSpan('ach4',127,1100,'<span> 点</span>');
-  },300);
-  for(let i=0;i<3;i++)setTimeout(()=>addFeed(false),i*300);
-  setInterval(()=>addFeed(false),3800);
+        finalType.keywords.forEach(function(keyword, index) {
+            // 安全なエスケープを用いてURLを作成
+            const query = encodeURIComponent(userZipcode + " " + keyword);
+            const mapUrl = "https://www.google.com/maps/search/?api=1&query=" + query;
+            
+            const card = document.createElement('div');
+            card.className = 'place-card';
+            card.innerHTML = `
+                <div class="place-info">
+                    <h4>最も近いおすすめの ${keyword}</h4>
+                    <p>〒${userZipcode} 付近のスタジオをMapで検索</p>
+                </div>
+                <a href="${mapUrl}" target="_blank" class="map-link">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </a>
+            `;
+            container.appendChild(card);
+        });
+    }
 
-  // 今日すでに記録済みなら反映
-  const today=new Date().toISOString().slice(0,10);
-  const te=H.find(h=>h.date===today);
-  if(te){detectedSteps=te.steps;
-    document.getElementById('input-zone').style.display='none';
-    document.querySelector('.manual-link').style.display='none';
-    recordSteps(te.steps);
-  }
-});
+    function shareToInstagram() {
+        alert("📸 Instagram ストーリー連携イメージ 📸\n\n「#FitModi」がコピーされました！このままスクリーンショットを撮影して、インスタのストーリーに貼り付けてシェアしましょう！");
+    }
 </script>
 </body>
 </html>
